@@ -210,7 +210,7 @@ export function PermissionGate({
   children, 
   fallback = null 
 }: { 
-  permission: keyof typeof ROLE_PERMISSIONS.admin;
+  permission: string;
   children: React.ReactNode;
   fallback?: React.ReactNode;
 }) {

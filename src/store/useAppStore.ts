@@ -263,14 +263,14 @@ export interface ElectricityRecord {
 }
 
 export interface MaintenanceTicket {
-  id: string;
+  id?: string;
   roomId?: string;
-  title: string;
-  description: string;
-  priority: 'low' | 'medium' | 'high' | 'urgent';
-  status: 'pending' | 'in_progress' | 'completed' | 'scheduled';
+  title?: string;
+  description?: string;
+  priority?: string;
+  status?: string;
   assignedTo?: string;
-  createdAt: string;
+  createdAt?: string;
   completedAt?: string;
   propertyId?: string;
   estimatedCost?: number;
@@ -418,15 +418,17 @@ export interface AiInsight {
 }
 
 export interface Workflow {
-  id: string;
-  name: string;
-  trigger: string;
-  actions: string[];
-  status: 'active' | 'inactive';
+  id?: string;
+  name?: string;
+  trigger?: string;
+  actions?: string[];
+  status?: string;
   lastRun?: string;
   description?: string;
   createdBy?: string;
   createdAt?: string;
+  steps?: number;
+  runs?: number;
 }
 
 // ============================================

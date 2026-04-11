@@ -166,7 +166,7 @@ function TicketManagementContent() {
     }
     
     updateTicket(ticketId, updates);
-    toast.success(`Status changed to ${STATUS_CONFIG[newStatus].label}`);
+    toastHelpers.success(`Status changed to ${STATUS_CONFIG[newStatus].label}`);
     if (selectedTicket?.id === ticketId) {
       setSelectedTicket({ ...selectedTicket, ...updates });
     }

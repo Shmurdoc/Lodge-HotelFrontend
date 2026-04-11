@@ -17,7 +17,8 @@ import type { Invoice, Payment } from '@/store/useAppStore';
 
 interface FinancialDataContainerProps {
   requiredPermission: string;
-  dataType: 'invoices' | 'payments' | 'all';
+  dataType?: 'invoices' | 'payments' | 'all';
+  enableRealtime?: boolean;
   renderLoading?: () => ReactNode;
   renderError?: (error: string) => ReactNode;
   renderEmpty?: () => ReactNode;

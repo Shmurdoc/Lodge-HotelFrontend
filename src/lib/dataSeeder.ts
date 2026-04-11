@@ -189,7 +189,7 @@ export const dataSeeder = {
         status: randomItem(statuses),
         price: randomAmount(1000, 8000),
         description: 'Comfortable and well-appointed room',
-        amenities: randomItem(AMENITIES),
+        amenities: [randomItem(AMENITIES)].filter(Boolean),
         image: 'https://via.placeholder.com/300x200?text=Hotel+Room',
         maxOccupancy: randomItem([2, 2, 2, 3, 4]),
         lastCleaned: randomDate(2).toISOString(),
