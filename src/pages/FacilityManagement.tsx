@@ -411,8 +411,8 @@ function FacilityManagementContent() {
     setTicketForm({
       title: ticket.title,
       description: ticket.description,
-      priority: ticket.priority,
-      status: ticket.status,
+      priority: ticket.priority as any,
+      status: ticket.status as any,
       category: 'Other',
       assignedTo: ticket.assignedTo || '',
       propertyId: ticket.propertyId || '1',

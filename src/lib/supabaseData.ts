@@ -321,7 +321,7 @@ export const dataService = {
       guestName: [`John Smith`, 'Jane Doe', 'Mike Johnson', 'Sarah Wilson', 'Tom Brown'][i % 5],
       guestEmail: `guest${i + 1}@example.com`,
       guestPhone: '+27 82 000 000' + i,
-      guestSegment: ['New', 'Frequent', 'VIP'][i % 3] as string,
+      guestSegment: 'New',
       propertyId: DEMO_PROPERTY_ID,
       propertyName: 'Nexus Grand Hotel',
       roomId: `room-${(i % 20) + 1}`,
@@ -331,12 +331,12 @@ export const dataService = {
       checkOut: new Date(Date.now() + (3 - i) * 86400000).toISOString(),
       nights: Math.floor(Math.random() * 7) + 1,
       guests: Math.floor(Math.random() * 2) + 1,
-      status: (['pending', 'confirmed', 'checked-in', 'checked-out'] as const)[i % 4] as string,
-      paymentStatus: (['pending', 'paid', 'partial'] as const)[i % 3] as string,
+      status: 'pending',
+      paymentStatus: 'pending',
       amount: 1500 + i * 500,
       source: 'Direct',
       createdAt: new Date(Date.now() - i * 172800000).toISOString(),
-    }))
+    })) as any
   },
 
   getDemoGuests(): Guest[] {
@@ -347,14 +347,14 @@ export const dataService = {
       phone: '+27 82 000 000' + i,
       idNumber: `ID${100000 + i}`,
       nationality: 'South African',
-      segment: (['New', 'Frequent', 'VIP', 'Corporate'] as const)[i % 4] as string,
+      segment: 'New',
       totalStays: i,
       loyaltyPoints: i * 100,
       preferences: [],
       notes: '',
       createdAt: new Date(Date.now() - i * 86400000).toISOString(),
       lastVisit: new Date(Date.now() - i * 43200000).toISOString(),
-    }))
+    })) as any
   },
 
   getDemoStaff(): User[] {
