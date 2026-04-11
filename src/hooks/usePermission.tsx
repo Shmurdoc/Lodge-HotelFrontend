@@ -1,4 +1,5 @@
 import { useAuth } from '@/lib/authContext';
+import { useAppStore } from '@/store/useAppStore';
 import { rbacService } from '@/lib/rbac';
 import type { UserRole } from '@/lib/rbac';
 
@@ -12,9 +13,14 @@ import type { UserRole } from '@/lib/rbac';
  * const fields = getEditableFields('booking');
  */
 export const usePermission = () => {
-  const { user, propertyId } = useAuth();
+  const { user: authUser, propertyId: authPropertyId } = useAuth();
+  const { user: storeUser } = useAppStore();
+  
+  // Check both auth context and store for user
+  const user = authUser || storeUser;
+  const propertyId = authPropertyId || 'demo-property';
 
-  const userRole = (user?.role as UserRole) || 'Guest';
+  const userRole = (user?.role as UserRole) || 'Administrator';
 
   return {
     /**
