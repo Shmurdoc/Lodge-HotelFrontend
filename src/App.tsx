@@ -820,11 +820,17 @@ function App() {
           api.staffApi.getAll().catch(() => []),
         ]);
         
-        setProperties((props as any[])?.length ? props : []);
-        setRooms((rooms as any[])?.length ? rooms : []);
-        setBookings((bookings as any[])?.length ? bookings : []);
-        setGuests((guests as any[])?.length ? guests : []);
-        setStaff((staff as any[])?.length ? staff : []);
+        const propsArray = Array.isArray(props) ? props : [];
+        const roomsArray = Array.isArray(rooms) ? rooms : [];
+        const bookingsArray = Array.isArray(bookings) ? bookings : [];
+        const guestsArray = Array.isArray(guests) ? guests : [];
+        const staffArray = Array.isArray(staff) ? staff : [];
+        
+        setProperties(propsArray);
+        setRooms(roomsArray);
+        setBookings(bookingsArray);
+        setGuests(guestsArray);
+        setStaff(staffArray);
         
         console.log('Loaded data from ASP.NET backend API');
       } catch (err) {
