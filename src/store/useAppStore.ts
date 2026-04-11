@@ -379,19 +379,19 @@ export interface Payment {
 }
 
 export interface AuditLog {
-  id: string;
-  action: string;
-  entityType: 'booking' | 'guest' | 'room' | 'invoice' | 'payment' | 'ticket' | 'user' | 'property' | 'expense' | 'inventory';
-  entityId: string;
+  id?: string;
+  action?: string;
+  entityType?: string;
+  entityId?: string;
   entityName?: string;
-  userId: string;
-  userName: string;
+  userId?: string;
+  userName?: string;
   userRole?: string;
-  details: string;
+  details?: string;
   oldValue?: string;
   newValue?: string;
   ipAddress?: string;
-  timestamp: string;
+  timestamp?: string;
 }
 
 export interface TaxConfig {

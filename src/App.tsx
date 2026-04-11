@@ -591,10 +591,9 @@ const WorkflowBuilder = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
                     status: 'active' as const,
                     lastRun: new Date().toISOString(),
                     runs: 0,
-                    actions: [],
                   };
                   addWorkflow(wf);
-                  addAuditLog({ action: 'create', entityId: wf.id, entityType: 'booking', details: `Created workflow: ${wf.name}`, userId: 'system', userName: 'system' });
+                  addAuditLog({ id: `audit-${Date.now()}`, action: 'create', entityId: wf.id, entityType: 'booking', details: `Created workflow: ${wf.name}`, userId: 'system', userName: 'system', timestamp: new Date().toISOString() });
                   toast.success(`Workflow "${workflowName}" saved and activated!`);
                   onClose();
                 }}
@@ -1019,7 +1018,7 @@ function App() {
           count++;
         }
       });
-      addAuditLog({ action: 'rate_adjustment', entity: 'rooms', entityId: 'bulk', details: `AI recommendation applied: raised ${count} premium room rates by 10%`, userId: 'system' });
+      addAuditLog({ action: 'rate_adjustment', entityId: 'bulk', entityType: 'room', details: `AI recommendation applied: raised ${count} premium room rates by 10%`, userId: 'system', userName: 'system' });
       toast.success(`Rate adjustment applied to ${count} premium rooms (+10%)`);
     };
     
