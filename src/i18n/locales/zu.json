@@ -1,0 +1,100 @@
+{
+  "common": {
+    "loading": "Iyaloading...",
+    "save": "Gcina",
+    "cancel": "CANCEL",
+    "delete": "Susa",
+    "edit": "Hlela",
+    "add": "Engeza",
+    "search": "Sesha",
+    "filter": "Hlela",
+    "export": "Khipha",
+    "import": "Ngenisa",
+    "refresh": "Vuselela",
+    "back": "Emuva",
+    "next": "Okulandelayo",
+    "previous": "Okwangaphambili",
+    "yes": "Yebo",
+    "no": "Cha",
+    "confirm": "Qinisekisa",
+    "close": "Vala"
+  },
+  "nav": {
+    "dashboard": "I Dashboard",
+    "bookings": "Amabheksi",
+    "rooms": "Amakamelo",
+    "guests": "Ab guests",
+    "checkInOut": "Ngena / Phuma",
+    "financial": "Ezimali",
+    "staff": "Abasebenzi",
+    "reports": "Ama Repothi",
+    "settings": "Izilungiselelo"
+  },
+  "booking": {
+    "title": "Amabheksi",
+    "newBooking": "Ibheksi Entsha",
+    "checkIn": "Ngena",
+    "checkOut": "Phuma",
+    "cancelBooking": "CANCEL Ibheksi",
+    "bookingReference": "Inkomba yebheksi",
+    "guestName": "Igama lweguesti",
+    "roomType": "Uhlobo lwakamelo",
+    "checkInDate": "Umhla wangena",
+    "checkOutDate": "Umhla waphuma",
+    "nights": "izinsuku zobusuku",
+    "adults": "abantu abadala",
+    "children": "abantwana"
+  },
+  "guest": {
+    "title": "Ab guests",
+    "newGuest": "Guest entsha",
+    "guestDetails": "Imininingwane yeguesti",
+    "firstName": "Igama",
+    "lastName": "Isibongo",
+    "email": "I-email",
+    "phone": "Ifoni",
+    "idNumber": "Inombolo yelayisense",
+    "preferences": "Izinto ezikhethiwe",
+    "loyalty": "Amaphoyinti eloyalty",
+    "vip": "VIP"
+  },
+  "room": {
+    "title": "Ama kamelo",
+    "roomNumber": "Inombolo yakamelo",
+    "roomType": "Uhlobo lwcamelo",
+    "floor": "Umthetho",
+    "amenities": "Izinsiza"
+  },
+  "financial": {
+    "title": "Ezimali",
+    "invoice": "Invoice",
+    "payment": "Intela",
+    "totalAmount": "Inani liphelele",
+    "paid": "Kwahlawulwa",
+    "balance": "Isingeniso"
+  },
+  "staff": {
+    "title": "Abasebenzi",
+    "employee": "Umsebenzi",
+    "department": "Idepatimenti",
+    "role": "Indima",
+    "attendance": "Ukuba khona"
+  },
+  "reports": {
+    "title": "Ama Repothi",
+    "occupancy": "Repothi yokuhlala",
+    "revenue": "Repothi yengeniso",
+    "exportPdf": "Khipha iPDF"
+  },
+  "settings": {
+    "title": "Izilungiselelo",
+    "language": "Ulimi",
+    "currency": "imali"
+  },
+  "messages": {
+    "saved": "Kugcinwe ngempumelelo",
+    "deleted": "Kususiwe ngempumelelo",
+    "error": "Kube nomphakamo",
+    "success": "Impumelelo"
+  }
+}

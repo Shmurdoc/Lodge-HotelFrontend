@@ -1,0 +1,135 @@
+{
+  "common": {
+    "loading": "Laai...",
+    "save": "Stoor",
+    "cancel": "Kanselleer",
+    "delete": "Skrap",
+    "edit": "Wysig",
+    "add": "Voeg by",
+    "search": "Soek",
+    "filter": "Filtreer",
+    "export": "Eksporteer",
+    "import": "Invoer",
+    "refresh": "Verfris",
+    "back": "Terug",
+    "next": "Volgende",
+    "previous": "Vorige",
+    "yes": "Ja",
+    "no": "Nee",
+    "confirm": "Bevestig",
+    "close": "Sluit"
+  },
+  "nav": {
+    "dashboard": "Dashbord",
+    "bookings": "Besprekings",
+    "rooms": "Kamers",
+    "guests": "Gaste",
+    "checkInOut": "In-/Uitcheck",
+    "financial": "Finansieel",
+    "staff": "Personeel",
+    "reports": "Verslae",
+    "settings": "Instellings"
+  },
+  "booking": {
+    "title": "Besprekings",
+    "newBooking": "Nuwe Bespreking",
+    "checkIn": "Incheck",
+    "checkOut": "Uitcheck",
+    "cancelBooking": "Bespreking Kanselleer",
+    "bookingReference": "Besprekingsverwysing",
+    "guestName": "Gastenaam",
+    "roomType": "Kamer-tipe",
+    "checkInDate": "Incheck-datum",
+    "checkOutDate": "Uitcheck-datum",
+    "nights": "Nagle",
+    "adults": "Volwassenes",
+    "children": "Kinders",
+    "status": {
+      "pending": "Hangende",
+      "confirmed": "Bevestig",
+      "checkedIn": "Ingecheck",
+      "checkedOut": "Uitgecheck",
+      "cancelled": "Gekanselleer",
+      "noShow": "Nie opgedaag nie"
+    },
+    "source": {
+      "direct": "Direk",
+      "bookingCom": "Booking.com",
+      "expedia": "Expedia",
+      "airbnb": "Airbnb"
+    }
+  },
+  "guest": {
+    "title": "Gaste",
+    "newGuest": "Nuwe Gast",
+    "guestDetails": "Gast besonderhede",
+    "firstName": "Voornaam",
+    "lastName": "Van",
+    "email": "E-pos",
+    "phone": "Telefoon",
+    "idNumber": "ID-nommer",
+    "preferences": "Voorkeure",
+    "loyalty": "Loyaliteitspunte",
+    "vip": "VIP"
+  },
+  "room": {
+    "title": "Kamers",
+    "roomNumber": "Kamer nommer",
+    "roomType": "Kamer-tipe",
+    "floor": "Vloer",
+    "status": {
+      "available": "Beskikbaar",
+      "occupied": "Beset",
+      "maintenance": "Onderhoud",
+      "cleaning": "Skoonmaak",
+      "reserved": "Gereseveer"
+    },
+    "amenities": "Geriewe"
+  },
+  "financial": {
+    "title": "Finansieel",
+    "invoice": "Faktuur",
+    "payment": "Betaling",
+    "totalAmount": "Totaal bedrag",
+    "paid": "Betaal",
+    "balance": "Balans",
+    "paymentMethod": "Betaling metode",
+    "transaction": "Transaksie"
+  },
+  "staff": {
+    "title": "Personeel",
+    "employee": "Werknemer",
+    "department": "Departement",
+    "role": "Rol",
+    "shift": "Skof",
+    "attendance": "Bywoning",
+    "schedule": "Skedule"
+  },
+  "reports": {
+    "title": "Verslae",
+    "occupancy": "Besetting verslag",
+    "revenue": "Inkomste verslag",
+    "guestAnalytics": "Gastanalise",
+    "exportPdf": "Eksporteer PDF",
+    "exportExcel": "Eksporteer Excel"
+  },
+  "settings": {
+    "title": "Instellings",
+    "general": "Algemeen",
+    "users": "Gebruikers",
+    "roles": "Rolle",
+    "notifications": "Kennisgewings",
+    "integrations": "Integrasies",
+    "language": "Taal",
+    "currency": "Geldeenheid",
+    "timezone": "Tyd sone"
+  },
+  "messages": {
+    "saved": "Suksesvol gestoor",
+    "deleted": "Suksesvol geskrap",
+    "error": "'n Fout het voorgekom",
+    "success": "Operasie suksesvol",
+    "confirmDelete": "Is jy seker jy wil skrap?",
+    "noResults": "Geen resultate gevind nie"
+  }
+}

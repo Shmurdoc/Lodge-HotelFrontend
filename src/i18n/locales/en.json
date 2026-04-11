@@ -1,0 +1,135 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "search": "Search",
+    "filter": "Filter",
+    "export": "Export",
+    "import": "Import",
+    "refresh": "Refresh",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "yes": "Yes",
+    "no": "No",
+    "confirm": "Confirm",
+    "close": "Close"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "bookings": "Bookings",
+    "rooms": "Rooms",
+    "guests": "Guests",
+    "checkInOut": "Check In/Out",
+    "financial": "Financial",
+    "staff": "Staff",
+    "reports": "Reports",
+    "settings": "Settings"
+  },
+  "booking": {
+    "title": "Bookings",
+    "newBooking": "New Booking",
+    "checkIn": "Check In",
+    "checkOut": "Check Out",
+    "cancelBooking": "Cancel Booking",
+    "bookingReference": "Booking Reference",
+    "guestName": "Guest Name",
+    "roomType": "Room Type",
+    "checkInDate": "Check-in Date",
+    "checkOutDate": "Check-out Date",
+    "nights": "Nights",
+    "adults": "Adults",
+    "children": "Children",
+    "status": {
+      "pending": "Pending",
+      "confirmed": "Confirmed",
+      "checkedIn": "Checked In",
+      "checkedOut": "Checked Out",
+      "cancelled": "Cancelled",
+      "noShow": "No Show"
+    },
+    "source": {
+      "direct": "Direct",
+      "bookingCom": "Booking.com",
+      "expedia": "Expedia",
+      "airbnb": "Airbnb"
+    }
+  },
+  "guest": {
+    "title": "Guests",
+    "newGuest": "New Guest",
+    "guestDetails": "Guest Details",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "email": "Email",
+    "phone": "Phone",
+    "idNumber": "ID Number",
+    "preferences": "Preferences",
+    "loyalty": "Loyalty Points",
+    "vip": "VIP"
+  },
+  "room": {
+    "title": "Rooms",
+    "roomNumber": "Room Number",
+    "roomType": "Room Type",
+    "floor": "Floor",
+    "status": {
+      "available": "Available",
+      "occupied": "Occupied",
+      "maintenance": "Maintenance",
+      "cleaning": "Cleaning",
+      "reserved": "Reserved"
+    },
+    "amenities": "Amenities"
+  },
+  "financial": {
+    "title": "Financial",
+    "invoice": "Invoice",
+    "payment": "Payment",
+    "totalAmount": "Total Amount",
+    "paid": "Paid",
+    "balance": "Balance",
+    "paymentMethod": "Payment Method",
+    "transaction": "Transaction"
+  },
+  "staff": {
+    "title": "Staff",
+    "employee": "Employee",
+    "department": "Department",
+    "role": "Role",
+    "shift": "Shift",
+    "attendance": "Attendance",
+    "schedule": "Schedule"
+  },
+  "reports": {
+    "title": "Reports",
+    "occupancy": "Occupancy Report",
+    "revenue": "Revenue Report",
+    "guestAnalytics": "Guest Analytics",
+    "exportPdf": "Export PDF",
+    "exportExcel": "Export Excel"
+  },
+  "settings": {
+    "title": "Settings",
+    "general": "General",
+    "users": "Users",
+    "roles": "Roles",
+    "notifications": "Notifications",
+    "integrations": "Integrations",
+    "language": "Language",
+    "currency": "Currency",
+    "timezone": "Timezone"
+  },
+  "messages": {
+    "saved": "Saved successfully",
+    "deleted": "Deleted successfully",
+    "error": "An error occurred",
+    "success": "Operation successful",
+    "confirmDelete": "Are you sure you want to delete?",
+    "noResults": "No results found"
+  }
+}
