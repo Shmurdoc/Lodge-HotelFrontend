@@ -805,25 +805,49 @@ function App() {
   // Get properties from store
   const { properties, setUser, setProperties, setRooms, setBookings, setGuests, setUsers: setStaff } = useAppStore();
 
-  // Load data from Supabase on start
+  // Load data from ASP.NET backend API on start
   useEffect(() => {
     const loadData = async () => {
       try {
-        const { dataService } = await import('./lib/supabaseData');
+        const api = await import('./lib/backendApi');
+        
+        // Try to fetch from backend API first
         const [props, rooms, bookings, guests, staff] = await Promise.all([
-          dataService.getProperties(),
-          dataService.getRooms(),
-          dataService.getBookings(),
-          dataService.getGuests(),
-          dataService.getStaff(),
+          api.propertyApi.getAll().catch(() => []),
+          api.roomApi.getAll().catch(() => []),
+          api.bookingApi.getAll().catch(() => []),
+          api.guestApi.getAll().catch(() => []),
+          api.staffApi.getAll().catch(() => []),
         ]);
-        setProperties(props);
-        setRooms(rooms);
-        setBookings(bookings);
-        setGuests(guests);
-        setStaff(staff);
+        
+        setProperties((props as any[])?.length ? props : []);
+        setRooms((rooms as any[])?.length ? rooms : []);
+        setBookings((bookings as any[])?.length ? bookings : []);
+        setGuests((guests as any[])?.length ? guests : []);
+        setStaff((staff as any[])?.length ? staff : []);
+        
+        console.log('Loaded data from ASP.NET backend API');
       } catch (err) {
-        console.warn('Using mock data:', err);
+        console.warn('Backend not available, trying Supabase:', err);
+        // Fallback to Supabase/mock data
+        try {
+          const { dataService } = await import('./lib/supabaseData');
+          const [props, rooms, bookings, guests, staff] = await Promise.all([
+            dataService.getProperties(),
+            dataService.getRooms(),
+            dataService.getBookings(),
+            dataService.getGuests(),
+            dataService.getStaff(),
+          ]);
+          setProperties(props);
+          setRooms(rooms);
+          setBookings(bookings);
+          setGuests(guests);
+          setStaff(staff);
+          console.log('Using Supabase mock data');
+        } catch (err2) {
+          console.warn('Using local mock data:', err2);
+        }
       }
     };
     loadData();

@@ -566,12 +566,14 @@ export interface AppState {
 
   // Bookings CRUD
   bookings: Booking[];
+  setBookings: (bookings: Booking[]) => void;
   addBooking: (booking: Booking) => void;
   updateBooking: (id: string, updates: Partial<Booking>) => void;
   deleteBooking: (id: string) => void;
 
   // Guests CRUD
   guests: Guest[];
+  setGuests: (guests: Guest[]) => void;
   addGuest: (guest: Guest) => void;
   updateGuest: (id: string, updates: Partial<Guest>) => void;
   deleteGuest: (id: string) => void;
@@ -847,6 +849,7 @@ export const useAppStore = create<AppState>()(
 
       // Bookings CRUD
       bookings: [],
+      setBookings: (bookings) => set({ bookings }),
       addBooking: (booking) => set((state) => ({ bookings: [...state.bookings, booking] })),
       updateBooking: (id, updates) => set((state) => ({
         bookings: state.bookings.map((b) => b.id === id ? { ...b, ...updates } : b)
@@ -857,6 +860,7 @@ export const useAppStore = create<AppState>()(
 
       // Guests CRUD
       guests: [],
+      setGuests: (guests) => set({ guests }),
       addGuest: (guest) => set((state) => ({ guests: [...state.guests, guest] })),
       updateGuest: (id, updates) => set((state) => ({
         guests: state.guests.map((g) => g.id === id ? { ...g, ...updates } : g)
