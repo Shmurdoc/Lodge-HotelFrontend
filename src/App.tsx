@@ -803,7 +803,7 @@ function App() {
   const [selectedPropertyId, setSelectedPropertyId] = useState<string>('all');
   
   // Get properties from store
-  const { properties } = useAppStore();
+  const { properties, setUser } = useAppStore();
 
   // Apply theme
   useEffect(() => {
