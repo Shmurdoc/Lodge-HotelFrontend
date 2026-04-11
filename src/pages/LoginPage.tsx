@@ -240,6 +240,12 @@ const LoginPage = ({ onLogin }: LoginPageProps) => {
           // Don't auto-login - require email verification
         }
       } else {
+        // Demo bypass - accept demo credentials without Supabase
+        if (sanitizedEmail === 'demo@safaristack.com' && password === 'Demo123!') {
+          onLogin(sanitizedEmail, password);
+          return;
+        }
+        
         // Sign in flow
         const { data, error: signInError } = await signIn(sanitizedEmail, password);
         
