@@ -816,6 +816,20 @@ function App() {
   const handleLogin = (_email: string, _password: string) => {
     localStorage.setItem('nexus_logged_in', 'true');
     setIsLoggedIn(true);
+    
+    // Set demo user - full access
+    if (_email === 'demo@safaristack.com') {
+      setUser({
+        id: 'demo-user',
+        name: 'Demo Admin',
+        email: _email,
+        role: 'Administrator',
+        department: 'Management',
+        status: 'active',
+        phone: '+27 82 000 0000',
+      });
+    }
+    
     toast.success('Welcome back to NEXUS PMS!');
   };
 
