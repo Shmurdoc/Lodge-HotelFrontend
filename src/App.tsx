@@ -803,7 +803,31 @@ function App() {
   const [selectedPropertyId, setSelectedPropertyId] = useState<string>('all');
   
   // Get properties from store
-  const { properties, setUser } = useAppStore();
+  const { properties, setUser, setProperties, setRooms, setBookings, setGuests, setUsers: setStaff } = useAppStore();
+
+  // Load data from Supabase on start
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const { dataService } = await import('./lib/supabaseData');
+        const [props, rooms, bookings, guests, staff] = await Promise.all([
+          dataService.getProperties(),
+          dataService.getRooms(),
+          dataService.getBookings(),
+          dataService.getGuests(),
+          dataService.getStaff(),
+        ]);
+        setProperties(props);
+        setRooms(rooms);
+        setBookings(bookings);
+        setGuests(guests);
+        setStaff(staff);
+      } catch (err) {
+        console.warn('Using mock data:', err);
+      }
+    };
+    loadData();
+  }, []);
 
   // Apply theme
   useEffect(() => {
