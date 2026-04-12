@@ -325,8 +325,9 @@ export const api = {
     apiRequest('/api/rate-plans', { method: 'POST', body: ratePlan }),
 
   // Housekeeping
+  // Backend endpoint is GET /api/housekeeping/tasks/{propertyId}
   getHousekeepingTasks: (propertyId: string) => 
-    apiRequest(`/api/housekeeping/tasks?propertyId=${propertyId}`),
+    apiRequest(`/api/housekeeping/tasks/${propertyId}`),
   createHousekeepingTask: (task: Record<string, unknown>) => 
     apiRequest('/api/housekeeping/tasks', { method: 'POST', body: task }),
   updateHousekeepingTask: (taskId: string, status: string) => 

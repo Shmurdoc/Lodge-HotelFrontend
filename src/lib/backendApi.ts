@@ -126,7 +126,8 @@ export const paymentApi = {
 // HOUSEKEEPING ENDPOINTS
 // ============================================
 export const housekeepingApi = {
-  getTasks: (propertyId?: string) => fetchApi(`/api/housekeeping/tasks${propertyId ? `?propertyId=${propertyId}` : ''}`),
+  // Backend expects GET /api/housekeeping/tasks/{propertyId}
+  getTasks: (propertyId?: string) => fetchApi(propertyId ? `/api/housekeeping/tasks/${propertyId}` : `/api/housekeeping/tasks`),
   getTaskById: (id: string) => fetchApi(`/api/housekeeping/tasks/detail/${id}`),
   createTask: (data: Record<string, unknown>) => fetchApi('/api/housekeeping/tasks', { method: 'POST', body: JSON.stringify(data) }),
   assignTask: (taskId: string, userId: string) => fetchApi(`/api/housekeeping/tasks/${taskId}/assign`, { method: 'PUT', body: JSON.stringify({ userId }) }),
