@@ -802,13 +802,14 @@ function App() {
     return localStorage.getItem('nexus_theme') !== 'light';
   });
   const [selectedPropertyId, setSelectedPropertyId] = useState<string>('all');
+  const [dataLoaded, setDataLoaded] = useState(false);
   
   // Get properties from store
   const { properties, setUser, setProperties, setRooms, setBookings, setGuests, setUsers: setStaff } = useAppStore();
 
-  // Load data from ASP.NET backend API after login
+  // Load data from ASP.NET backend API after login completes
   useEffect(() => {
-    if (!isLoggedIn) return;
+    if (!dataLoaded) return;
     
     const loadData = async () => {
       try {
@@ -857,7 +858,7 @@ function App() {
     };
     
     loadData();
-  }, [isLoggedIn, selectedPropertyId]);
+  }, [dataLoaded, selectedPropertyId]);
 
   // Apply theme
   useEffect(() => {
@@ -890,19 +891,20 @@ function App() {
       console.log('Backend login successful!');
       
       // Set default property after successful login
-      // Try to use the first property from store, or fall back to Demo Lodge
       const demoPropertyId = '36101fba-f56b-449e-8fa6-28f2137d1048';
       const properties = useAppStore.getState().properties;
       if (properties && properties.length > 0) {
         setSelectedPropertyId(properties[0].id);
         console.log('Auto-selected property:', properties[0].id);
       } else {
-        // Fallback to Demo Lodge ID
         setSelectedPropertyId(demoPropertyId);
         console.log('Set fallback property:', demoPropertyId);
       }
+      
+      // Trigger data load AFTER login is complete
+      setDataLoaded(true);
     } else {
-      console.log('Backend login failed - will use local/mock data');
+      console.log('Backend login failed');
     }
     
     toast.success('Welcome back to NEXUS PMS!');
@@ -912,6 +914,7 @@ function App() {
   const handleLogout = () => {
     localStorage.removeItem('nexus_logged_in');
     setIsLoggedIn(false);
+    setDataLoaded(false);
     setActivePage('dashboard');
     toast.success('Logged out successfully');
   };
