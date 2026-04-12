@@ -45,6 +45,7 @@ import NotificationBell from './components/notifications/NotificationBell';
 import GlobalSearch from './components/search/GlobalSearch';
 import { DemoControls } from './components/demo/DemoControls';
 import { useAppStore } from './store/useAppStore';
+import { loginToBackend } from './lib/api';
 
 // ============================================
 // TYPES & INTERFACES
@@ -867,7 +868,7 @@ function App() {
   }, [darkMode]);
 
   // Login handler
-  const handleLogin = (_email: string, _password: string) => {
+  const handleLogin = async (_email: string, _password: string) => {
     localStorage.setItem('nexus_logged_in', 'true');
     setIsLoggedIn(true);
     
@@ -882,6 +883,14 @@ function App() {
         status: 'active',
         phone: '+27 82 000 0000',
       });
+    }
+    
+    // Login to backend API to get JWT token
+    const loginSuccess = await loginToBackend(_email, _password);
+    if (loginSuccess) {
+      console.log('Backend login successful!')
+    } else {
+      console.log('Backend login failed - will use local/mock data')
     }
     
     toast.success('Welcome back to NEXUS PMS!');

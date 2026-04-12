@@ -60,7 +60,50 @@ function isRetryable(error: unknown, config: RetryConfig): boolean {
   return false
 }
 
+let backendToken: string | null = null
+
+export function setBackendToken(token: string | null) {
+  backendToken = token
+  console.log('Backend token set:', token ? 'YES' : 'NO')
+}
+
+export function getBackendToken() {
+  return backendToken
+}
+
+export async function loginToBackend(email: string, password: string): Promise<boolean> {
+  try {
+    const response = await fetch(`${API_URL}/api/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    })
+    
+    if (response.ok) {
+      const data = await response.json()
+      if (data.token) {
+        setBackendToken(data.token)
+        console.log('Logged into backend API successfully')
+        return true
+      }
+      console.log('Backend login response missing token')
+    } else {
+      console.error('Backend login failed:', response.status)
+    }
+    return false
+  } catch (error) {
+    console.error('Backend login error:', error)
+    return false
+  }
+}
+
 async function getAuthHeader(): Promise<Record<string, string>> {
+  // Use backend JWT token instead of Supabase JWT
+  if (backendToken) {
+    return { 'Authorization': `Bearer ${backendToken}` }
+  }
+  
+  // Fallback: try Supabase session (likely won't work with backend)
   try {
     const { data: { session } } = await supabase.auth.getSession()
     if (session?.access_token) {
