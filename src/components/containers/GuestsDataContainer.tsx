@@ -96,6 +96,8 @@ export const GuestsDataContainer: React.FC<GuestsDataContainerProps> = ({
 
   // Empty state
   if (guests.length === 0) {
+    // TEMP LOGS: show store counts for QA
+    console.log('[QA] GuestsDataContainer - store guests count:', guests.length, 'propertyId from auth:', propertyId);
     return renderEmpty ? (
       renderEmpty()
     ) : (

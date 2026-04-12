@@ -102,6 +102,9 @@ export const RoomsDataContainer: React.FC<RoomsDataContainerProps> = ({
     ? rooms.filter((r) => r.propertyId === propertyId)
     : rooms;
 
+  // TEMP LOGS: help QA diagnose empty pages
+  console.log('[QA] RoomsDataContainer - store rooms count:', rooms.length, 'propertyId from auth:', propertyId);
+
   // Apply filtering, sorting, and pagination
   const filterableKeys: (keyof Room)[] = ['status', 'type', 'number'];
   const filtered = useFilteredData(propertyRooms, filterableKeys);

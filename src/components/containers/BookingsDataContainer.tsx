@@ -104,6 +104,9 @@ export const BookingsDataContainer: React.FC<BookingsDataContainerProps> = ({
     ? bookings.filter((b) => b.propertyId === propertyId)
     : bookings;
 
+  // TEMP LOGS: show store counts for QA
+  console.log('[QA] BookingsDataContainer - store bookings count:', bookings.length, 'propertyId from auth:', propertyId);
+
   // Apply filtering, sorting, and pagination
   const filterableKeys: (keyof Booking)[] = ['status', 'roomType', 'guestName'];
   const filtered = useFilteredData(propertyBookings, filterableKeys);
