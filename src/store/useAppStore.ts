@@ -648,6 +648,8 @@ export const useAppStore = create<AppState>()(
       initializeData: async (propertyId: string) => {
         set({ isLoading: true, error: null });
         try {
+          console.log('Loading data for property:', propertyId);
+          
           // Load all data in parallel for better performance
           const [
             propertiesRes,
@@ -663,12 +665,16 @@ export const useAppStore = create<AppState>()(
             api.getStaff(propertyId),
           ]);
 
+          console.log('API Responses:', { propertiesRes, roomsRes, bookingsRes, guestsRes, staffRes });
+
           // Extract data from API responses with type casting
           const properties = propertiesRes.success && propertiesRes.data ? propertiesRes.data as unknown as Property[] : [];
           const rooms = roomsRes.success && roomsRes.data ? roomsRes.data as unknown as Room[] : [];
           const bookings = bookingsRes.success && bookingsRes.data ? bookingsRes.data as unknown as Booking[] : [];
           const guests = guestsRes.success && guestsRes.data ? guestsRes.data as unknown as Guest[] : [];
           const users = staffRes.success && staffRes.data ? staffRes.data as unknown as User[] : [];
+
+          console.log('Extracted data:', { properties, rooms, bookings, guests, users });
 
           set({
             users,
