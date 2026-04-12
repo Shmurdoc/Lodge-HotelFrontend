@@ -667,12 +667,23 @@ export const useAppStore = create<AppState>()(
 
           console.log('API Responses:', { propertiesRes, roomsRes, bookingsRes, guestsRes, staffRes });
 
-          // Extract data from API responses with type casting
-          const properties = propertiesRes.success && propertiesRes.data ? propertiesRes.data as unknown as Property[] : [];
-          const rooms = roomsRes.success && roomsRes.data ? roomsRes.data as unknown as Room[] : [];
-          const bookings = bookingsRes.success && bookingsRes.data ? bookingsRes.data as unknown as Booking[] : [];
-          const guests = guestsRes.success && guestsRes.data ? guestsRes.data as unknown as Guest[] : [];
-          const users = staffRes.success && staffRes.data ? staffRes.data as unknown as User[] : [];
+          // Extract data from API responses with resilient parsing for paginated or wrapped responses
+          const extractList = <T,>(res: any): T[] => {
+            if (!res || !res.success) return []
+            const d = res.data
+            if (!d) return []
+            if (Array.isArray(d)) return d as T[]
+            if (Array.isArray(d.Items)) return d.Items as T[]
+            if (Array.isArray(d.items)) return d.items as T[]
+            if (Array.isArray(d.data)) return d.data as T[]
+            return []
+          }
+
+          const properties = extractList<Property>(propertiesRes)
+          const rooms = extractList<Room>(roomsRes)
+          const bookings = extractList<Booking>(bookingsRes)
+          const guests = extractList<Guest>(guestsRes)
+          const users = extractList<User>(staffRes)
 
           console.log('Extracted data:', { properties, rooms, bookings, guests, users });
 
