@@ -1,0 +1,8 @@
+{
+  "email": "admin@nexusgrand.com",
+  "password": "NexusAdmin2026!",
+  "email_confirm": true,
+  "user_metadata": {
+    "name": "Admin User"
+  }
+}

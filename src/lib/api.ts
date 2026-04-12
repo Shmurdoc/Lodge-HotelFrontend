@@ -300,13 +300,19 @@ export const api = {
   
   // Charts
   getOccupancyTrend: (propertyId: string, days: number = 30) => 
-    apiRequest(`/api/chart/occupancy-trend/${propertyId}?days=${days}`),
+    apiRequest(`/api/charts/occupancy-trend/${propertyId}?days=${days}`),
   
   getRevenueBreakdown: (propertyId: string, days: number = 30) => 
-    apiRequest(`/api/chart/revenue-breakdown/${propertyId}?days=${days}`),
+    apiRequest(`/api/charts/revenue-breakdown/${propertyId}?days=${days}`),
   
   getGuestDemographics: (propertyId: string) => 
-    apiRequest(`/api/chart/guest-demographics/${propertyId}`),
+    apiRequest(`/api/charts/guest-demographics/${propertyId}`),
+  
+  getBookingSources: (propertyId: string) =>
+    apiRequest(`/api/charts/booking-sources/${propertyId}`),
+    
+  getDemandForecast: (propertyId: string, daysAhead: number = 30) =>
+    apiRequest(`/api/charts/demand-forecast/${propertyId}?daysAhead=${daysAhead}`),
   
   // Dashboard
   getKpiSummary: (propertyId: string) => 

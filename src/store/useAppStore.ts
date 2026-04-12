@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import * as supabaseService from '../lib/supabaseService';
+import { api } from '../lib/api';
 
 // ============================================
 // INTERFACES
@@ -643,39 +643,32 @@ export const useAppStore = create<AppState>()(
       setLoading: (isLoading) => set({ isLoading }),
       setError: (error) => set({ error }),
 
-      // Data initialization - loads all entities from Supabase
+      // Data initialization - loads all entities from Backend API
       isInitialized: false,
       initializeData: async (propertyId: string) => {
         set({ isLoading: true, error: null });
         try {
           // Load all data in parallel for better performance
           const [
-            users,
-            properties,
-            rooms,
-            bookings,
-            guests,
-            invoices,
-            payments,
-            expenses,
-            inventory,
-            tickets,
-            attendance,
-            maintenanceTickets,
+            propertiesRes,
+            roomsRes,
+            bookingsRes,
+            guestsRes,
+            staffRes,
           ] = await Promise.all([
-            supabaseService.usersService.getAll(propertyId).catch(() => []),
-            supabaseService.propertiesService.getAll().catch(() => []),
-            supabaseService.roomsService.getAll(propertyId).catch(() => []),
-            supabaseService.bookingsService.getAll(propertyId).catch(() => []),
-            supabaseService.guestsService.getAll(propertyId).catch(() => []),
-            supabaseService.invoicesService.getAll(propertyId).catch(() => []),
-            supabaseService.paymentsService.getAll(propertyId).catch(() => []),
-            supabaseService.expensesService.getAll(propertyId).catch(() => []),
-            supabaseService.inventoryService.getAll(propertyId).catch(() => []),
-            supabaseService.ticketsService.getAll(propertyId).catch(() => []),
-            supabaseService.attendanceService.getAll(propertyId).catch(() => []),
-            supabaseService.maintenanceService.getAll(propertyId).catch(() => []),
+            api.getProperties(),
+            api.getRooms(propertyId),
+            api.getBookings(propertyId),
+            api.getGuests(propertyId),
+            api.getStaff(propertyId),
           ]);
+
+          // Extract data from API responses
+          const properties = propertiesRes.success && propertiesRes.data ? propertiesRes.data as unknown[] : [];
+          const rooms = roomsRes.success && roomsRes.data ? roomsRes.data as unknown[] : [];
+          const bookings = bookingsRes.success && bookingsRes.data ? bookingsRes.data as unknown[] : [];
+          const guests = guestsRes.success && guestsRes.data ? guestsRes.data as unknown[] : [];
+          const users = staffRes.success && staffRes.data ? staffRes.data as unknown[] : [];
 
           set({
             users,
@@ -683,13 +676,13 @@ export const useAppStore = create<AppState>()(
             rooms,
             bookings,
             guests,
-            invoices,
-            payments,
-            expenses,
-            inventory,
-            tickets,
-            attendance,
-            maintenanceTickets,
+            invoices: [],
+            payments: [],
+            expenses: [],
+            inventory: [],
+            tickets: [],
+            attendance: [],
+            maintenanceTickets: [],
             isInitialized: true,
             isLoading: false,
           });
