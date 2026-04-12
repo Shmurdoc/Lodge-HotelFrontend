@@ -45,6 +45,7 @@ import NotificationBell from './components/notifications/NotificationBell';
 import GlobalSearch from './components/search/GlobalSearch';
 import { DemoControls } from './components/demo/DemoControls';
 import { useAppStore } from './store/useAppStore';
+import { useAuth } from './lib/authContext';
 import { loginToBackend } from './lib/api';
 
 // ============================================
@@ -806,6 +807,7 @@ function App() {
   
   // Get properties from store
   const { properties, setUser, setProperties, setRooms, setBookings, setGuests, setUsers: setStaff } = useAppStore();
+  const { propertyId: authPropertyId, setPropertyId } = useAuth();
 
   // Load data from ASP.NET backend API after login completes
   useEffect(() => {
@@ -893,13 +895,20 @@ function App() {
       // Set default property after successful login
       const demoPropertyId = '36101fba-f56b-449e-8fa6-28f2137d1048';
       const properties = useAppStore.getState().properties;
+      let finalPropertyId: string;
       if (properties && properties.length > 0) {
         setSelectedPropertyId(properties[0].id);
+        finalPropertyId = properties[0].id;
         console.log('Auto-selected property:', properties[0].id);
       } else {
         setSelectedPropertyId(demoPropertyId);
+        finalPropertyId = demoPropertyId;
         console.log('Set fallback property:', demoPropertyId);
       }
+      
+      // Sync propertyId to authContext so data containers can filter correctly
+      setPropertyId(finalPropertyId);
+      console.log('Synced propertyId to authContext:', finalPropertyId);
       
       // Trigger data load AFTER login is complete
       setDataLoaded(true);
@@ -915,6 +924,8 @@ function App() {
     localStorage.removeItem('nexus_logged_in');
     setIsLoggedIn(false);
     setDataLoaded(false);
+    setSelectedPropertyId('all');
+    setPropertyId(null);
     setActivePage('dashboard');
     toast.success('Logged out successfully');
   };
