@@ -663,12 +663,12 @@ export const useAppStore = create<AppState>()(
             api.getStaff(propertyId),
           ]);
 
-          // Extract data from API responses
-          const properties = propertiesRes.success && propertiesRes.data ? propertiesRes.data as unknown[] : [];
-          const rooms = roomsRes.success && roomsRes.data ? roomsRes.data as unknown[] : [];
-          const bookings = bookingsRes.success && bookingsRes.data ? bookingsRes.data as unknown[] : [];
-          const guests = guestsRes.success && guestsRes.data ? guestsRes.data as unknown[] : [];
-          const users = staffRes.success && staffRes.data ? staffRes.data as unknown[] : [];
+          // Extract data from API responses with type casting
+          const properties = propertiesRes.success && propertiesRes.data ? propertiesRes.data as unknown as Property[] : [];
+          const rooms = roomsRes.success && roomsRes.data ? roomsRes.data as unknown as Room[] : [];
+          const bookings = bookingsRes.success && bookingsRes.data ? bookingsRes.data as unknown as Booking[] : [];
+          const guests = guestsRes.success && guestsRes.data ? guestsRes.data as unknown as Guest[] : [];
+          const users = staffRes.success && staffRes.data ? staffRes.data as unknown as User[] : [];
 
           set({
             users,
