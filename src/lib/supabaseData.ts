@@ -18,146 +18,75 @@ export const dataService = {
     return data || []
   },
 
-  async getRooms(propertyId?: string): Promise<Room[]> {
+async getRooms(propertyId?: string): Promise<Room[]> {
     let query = supabase.from('rooms').select('*')
     
     if (propertyId) {
-      query = query.eq('property_id', propertyId)
-    }
-    
-    const { data, error } = await query.order('number')
-    
-    if (error || !data?.length) {
-      console.warn('Using demo rooms')
-      return this.getDemoRooms()
-    }
-    
-    return (data || []).map(this.mapRoomFromDb)
-  },
-
-  async getBookings(propertyId?: string): Promise<Booking[]> {
-    let query = supabase.from('bookings').select('*')
-    
-    if (propertyId) {
-      query = query.eq('property_id', propertyId)
-    }
-    
-    const { data, error } = await query.order('created_at', { ascending: false })
-    
-    if (error || !data?.length) {
-      console.warn('Using demo bookings')
-      return this.getDemoBookings() as any
-    }
-    
-    const bookings = (data || []).map(b => this.mapBookingFromDb(b))
-    return bookings as unknown as Booking[]
-  },
-
-  async getGuests(propertyId?: string): Promise<Guest[]> {
-    let query = supabase.from('guests').select('*')
-    
-    if (propertyId) {
-      query = query.eq('property_id', propertyId)
-    }
-    
-    const { data, error } = await query.order('created_at', { ascending: false })
-    
-    if (error || !data?.length) {
-      console.warn('Using demo guests')
-      return this.getDemoGuests() as any
-    }
-    
-    const guests = (data || []).map(g => this.mapGuestFromDb(g))
-    return guests as unknown as Guest[]
-  },
-
-  async getStaff(propertyId?: string): Promise<User[]> {
-    let query = supabase.from('users').select('*')
-    
-    if (propertyId) {
-      query = query.eq('property_id', propertyId)
-    }
-    
-    const { data, error } = await query.order('name')
-    
-    if (error || !data?.length) {
-      console.warn('Using demo staff')
-      return this.getDemoStaff() as any
-    }
-    
-    const staff = (data || []).map(u => this.mapUserFromDb(u))
-    return staff as unknown as User[]
-  },
-
-  async getRooms(propertyId?: string): Promise<Room[]> {
-    let query = supabase.from('rooms').select('*')
-    
-    if (propertyId) {
-      query = query.eq('property_id', propertyId)
+        query = query.eq('property_id', propertyId)
     }
     
     const { data, error } = await query.order('number')
     
     if (error) {
-      console.warn('Supabase fetch failed, using demo data:', error.message)
-      return this.getDemoRooms()
+        console.warn('Supabase fetch failed, using demo data:', error.message)
+        return this.getDemoRooms()
     }
     
     return (data || []).map(this.mapRoomFromDb)
-  },
+},
 
-  async getBookings(propertyId?: string): Promise<Booking[]> {
+async getBookings(propertyId?: string): Promise<Booking[]> {
     let query = supabase.from('bookings').select('*')
     
     if (propertyId) {
-      query = query.eq('property_id', propertyId)
+        query = query.eq('property_id', propertyId)
     }
     
     const { data, error } = await query.order('created_at', { ascending: false })
     
     if (error) {
-      console.warn('Supabase fetch failed, using demo data:', error.message)
-      return this.getDemoBookings() as any
+        console.warn('Supabase fetch failed, using demo data:', error.message)
+        return this.getDemoBookings() as any
     }
     
     const bookings = (data || []).map(b => this.mapBookingFromDb(b))
     return bookings as any
-  },
+},
 
-  async getGuests(propertyId?: string): Promise<Guest[]> {
+async getGuests(propertyId?: string): Promise<Guest[]> {
     let query = supabase.from('guests').select('*')
     
     if (propertyId) {
-      query = query.eq('property_id', propertyId)
+        query = query.eq('property_id', propertyId)
     }
     
     const { data, error } = await query.order('created_at', { ascending: false })
     
     if (error) {
-      console.warn('Supabase fetch failed, using demo data:', error.message)
-      return this.getDemoGuests() as any
+        console.warn('Supabase fetch failed, using demo data:', error.message)
+        return this.getDemoGuests() as any
     }
     
     const guests = (data || []).map(g => this.mapGuestFromDb(g))
     return guests as any
-  },
+},
 
-  async getStaff(propertyId?: string): Promise<User[]> {
+async getStaff(propertyId?: string): Promise<User[]> {
     let query = supabase.from('users').select('*')
     
     if (propertyId) {
-      query = query.eq('property_id', propertyId)
+        query = query.eq('property_id', propertyId)
     }
     
     const { data, error } = await query.order('name')
     
     if (error) {
-      console.warn('Supabase fetch failed, using demo data:', error.message)
-      return this.getDemoStaff()
+        console.warn('Supabase fetch failed, using demo data:', error.message)
+        return this.getDemoStaff()
     }
     
     return (data || []).map(this.mapUserFromDb)
-  },
+},
 
   async getInvoices(propertyId?: string): Promise<Invoice[]> {
     let query = supabase.from('invoices').select('*')
