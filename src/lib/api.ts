@@ -2,7 +2,6 @@ import { supabase } from './supabase'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:7001'
 
-// Types
 export interface ApiResponse<T = unknown> {
   success: boolean
   data?: T
@@ -61,7 +60,6 @@ function isRetryable(error: unknown, config: RetryConfig): boolean {
   return false
 }
 
-// Get JWT token from Supabase session
 async function getAuthHeader(): Promise<Record<string, string>> {
   try {
     const { data: { session } } = await supabase.auth.getSession()
@@ -82,7 +80,6 @@ interface ApiRequestOptions {
   headers?: Record<string, string>
 }
 
-// Main API request function
 export async function apiRequest<T = unknown>(
   url: string,
   options: ApiRequestOptions = {}
@@ -99,7 +96,6 @@ export async function apiRequest<T = unknown>(
       const controller = new AbortController()
       const timeoutId = setTimeout(() => controller.abort(), 30000)
 
-      // Get Supabase auth headers
       const authHeaders = await getAuthHeader()
 
       const response = await fetch(`${API_URL}${url}`, {
@@ -121,10 +117,20 @@ export async function apiRequest<T = unknown>(
         throw new Error(`HTTP ${response.status}`)
       }
 
-      const data = await response.json() as ApiResponse<T>
+      const text = await response.text()
+      let data: unknown = {}
+      
+      if (text) {
+        try {
+          data = JSON.parse(text)
+        } catch {
+          data = { raw: text }
+        }
+      }
       
       return {
-        ...data,
+        success: response.ok,
+        data: data as T,
         requestId,
         timestamp: new Date().toISOString(),
       }
@@ -154,7 +160,6 @@ export async function apiRequest<T = unknown>(
   }
 }
 
-// API Client factory
 export function createApiClient(baseUrl?: string) {
   const base = baseUrl || API_URL
   
@@ -172,161 +177,157 @@ export function createApiClient(baseUrl?: string) {
   }
 }
 
-// Convenience methods for common endpoints
+// ============================================
+// FIXED ENDPOINTS - Matching ASP.NET Backend Swagger
+// ============================================
+
 export const api = {
+  // Auth
   login: (email: string, password: string) => 
     apiRequest('/api/auth/login', { method: 'POST', body: { email, password } }),
   
   register: (email: string, password: string, firstName: string, lastName: string, phone: string) =>
     apiRequest('/api/auth/register', { method: 'POST', body: { email, password, firstName, lastName, phone } }),
   
-  getBookings: (propertyId?: string) => 
-    apiRequest(propertyId ? `/api/bookings?propertyId=${propertyId}` : '/api/bookings'),
+  getCurrentUser: () => apiRequest('/api/auth/me'),
   
-  getBooking: (id: string) => 
-    apiRequest(`/api/bookings/${id}`),
-  
-  createBooking: (booking: Record<string, unknown>) => 
-    apiRequest('/api/bookings', { method: 'POST', body: booking }),
-  
-  updateBooking: (id: string, booking: Record<string, unknown>) => 
-    apiRequest(`/api/bookings/${id}`, { method: 'PUT', body: booking }),
-  
-  cancelBooking: (id: string, reason: string) => 
-    apiRequest(`/api/bookings/${id}/cancel`, { method: 'POST', body: { reason } }),
-  
-  checkIn: (bookingId: string, userId: string) => 
-    apiRequest(`/api/bookings/${bookingId}/check-in`, { method: 'POST', body: { userId } }),
-  
-  checkOut: (bookingId: string, userId: string) => 
-    apiRequest(`/api/bookings/${bookingId}/check-out`, { method: 'POST', body: { userId } }),
-  
-  getGuests: (propertyId?: string) => 
-    apiRequest(propertyId ? `/api/guests?propertyId=${propertyId}` : '/api/guests'),
-  
-  getGuest: (id: string) => 
-    apiRequest(`/api/guests/${id}`),
-  
-  createGuest: (guest: Record<string, unknown>) => 
-    apiRequest('/api/guests', { method: 'POST' as const, body: guest }),
-  
-  updateGuest: (id: string, guest: Record<string, unknown>) => 
-    apiRequest(`/api/guests/${id}`, { method: 'PUT' as const, body: guest }),
-  
-  // Rooms
-  getRooms: (propertyId: string) => 
-    apiRequest(`/api/rooms?propertyId=${propertyId}`),
-  
-  getRoom: (id: string) => 
-    apiRequest(`/api/rooms/${id}`),
-  
-  createRoom: (room: Record<string, unknown>) => 
-    apiRequest('/api/rooms', { method: 'POST', body: room }),
-  
-  updateRoom: (id: string, room: Record<string, unknown>) => 
-    apiRequest(`/api/rooms/${id}`, { method: 'PUT', body: room }),
-  
-  updateRoomStatus: (id: string, status: string) => 
-    apiRequest(`/api/rooms/${id}/status`, { method: 'PUT', body: { status } }),
-  
-  getProperties: () => 
-    apiRequest('/api/properties'),
-  
-  getProperty: (id: string) => 
-    apiRequest(`/api/properties/${id}`),
-  
+  // Properties
+  getProperties: () => apiRequest('/api/properties'),
+  getProperty: (id: string) => apiRequest(`/api/properties/${id}`),
   createProperty: (property: Record<string, unknown>) => 
     apiRequest('/api/properties', { method: 'POST', body: property }),
-  
   updateProperty: (id: string, property: Record<string, unknown>) => 
     apiRequest(`/api/properties/${id}`, { method: 'PUT', body: property }),
-  
+
+  // Rooms - FIXED endpoints
+  getRooms: (propertyId: string) => 
+    apiRequest(`/api/rooms/types/${propertyId}`),
+  getRoom: (id: string) => 
+    apiRequest(`/api/rooms/${id}`),
+  createRoom: (room: Record<string, unknown>) => 
+    apiRequest('/api/rooms', { method: 'POST', body: room }),
+  updateRoom: (id: string, room: Record<string, unknown>) => 
+    apiRequest(`/api/rooms/${id}`, { method: 'PUT', body: room }),
+  updateRoomStatus: (id: string, status: string) => 
+    apiRequest(`/api/rooms/${id}/status`, { method: 'PUT', body: { status } }),
+
+  // Room Types
+  getRoomTypes: (propertyId: string) => 
+    apiRequest(`/api/room-types?propertyId=${propertyId}`),
+  createRoomType: (roomType: Record<string, unknown>) => 
+    apiRequest('/api/room-types', { method: 'POST', body: roomType }),
+
+  // Bookings - FIXED endpoints
+  getBookings: (propertyId: string) => 
+    apiRequest(`/api/bookings/property/${propertyId}`),
+  getBooking: (id: string) => 
+    apiRequest(`/api/bookings/${id}`),
+  createBooking: (booking: Record<string, unknown>) => 
+    apiRequest('/api/bookings', { method: 'POST', body: booking }),
+  updateBooking: (id: string, booking: Record<string, unknown>) => 
+    apiRequest(`/api/bookings/${id}`, { method: 'PUT', body: booking }),
+  cancelBooking: (id: string, reason: string) => 
+    apiRequest(`/api/bookings/${id}/cancel`, { method: 'POST', body: { reason } }),
+  checkIn: (bookingId: string, userId: string) => 
+    apiRequest(`/api/bookings/${bookingId}/check-in`, { method: 'POST', body: { userId } }),
+  checkOut: (bookingId: string, userId: string) => 
+    apiRequest(`/api/bookings/${bookingId}/check-out`, { method: 'POST', body: { userId } }),
+
+  // Guests - FIXED endpoints  
+  getGuests: (propertyId: string) => 
+    apiRequest(`/api/guests?propertyId=${propertyId}`),
+  getGuest: (id: string) => 
+    apiRequest(`/api/guests/${id}`),
+  createGuest: (guest: Record<string, unknown>) => 
+    apiRequest('/api/guests', { method: 'POST', body: guest }),
+  updateGuest: (id: string, guest: Record<string, unknown>) => 
+    apiRequest(`/api/guests/${id}`, { method: 'PUT', body: guest }),
+
+  // Staff - FIXED endpoints
   getStaff: (propertyId: string) => 
     apiRequest(`/api/staff?propertyId=${propertyId}`),
-  
   getStaffMember: (id: string) => 
     apiRequest(`/api/staff/${id}`),
-  
   createStaff: (staff: Record<string, unknown>) => 
     apiRequest('/api/staff', { method: 'POST', body: staff }),
-  
   updateStaff: (id: string, staff: Record<string, unknown>) => 
     apiRequest(`/api/staff/${id}`, { method: 'PUT', body: staff }),
-  
-  rfidCheckIn: (cardUid: string, readerId: string) => 
-    apiRequest('/api/rfid/check-in', { method: 'POST', body: { cardUid, readerId } }),
-  
-  rfidCheckOut: (cardUid: string, readerId: string) => 
-    apiRequest('/api/rfid/check-out', { method: 'POST', body: { cardUid, readerId } }),
-  
-  getOccupancyForecast: (propertyId: string, days: number = 90) => 
-    apiRequest(`/api/analytics/occupancy-forecast/${propertyId}?days=${days}`),
-  
-  getRevenueForecast: (propertyId: string, days: number = 90) => 
-    apiRequest(`/api/analytics/revenue-forecast/${propertyId}?days=${days}`),
-  
-  getDashboardMetrics: (propertyId: string) => 
-    apiRequest(`/api/analytics/dashboard/${propertyId}`),
-  
-  getPriceRecommendation: (propertyId: string) => 
-    apiRequest(`/api/revenue/price-recommendation/${propertyId}`),
-  
-  getRevenueAlerts: (propertyId: string) => 
-    apiRequest(`/api/revenue/alerts/${propertyId}`),
-  
+
+  // Invoices
   getInvoices: (propertyId: string) => 
     apiRequest(`/api/invoices?propertyId=${propertyId}`),
-  
   getInvoice: (id: string) => 
     apiRequest(`/api/invoices/${id}`),
-  
   createInvoice: (invoice: Record<string, unknown>) => 
     apiRequest('/api/invoices', { method: 'POST', body: invoice }),
-  
+
+  // Payments
   getPayments: (propertyId: string) => 
     apiRequest(`/api/payments?propertyId=${propertyId}`),
-  
   processPayment: (payment: Record<string, unknown>) => 
     apiRequest('/api/payments', { method: 'POST', body: payment }),
-  
+
+  // Amenities
+  getAmenities: (propertyId: string) => 
+    apiRequest(`/api/amenities?propertyId=${propertyId}`),
+  createAmenity: (amenity: Record<string, unknown>) => 
+    apiRequest('/api/amenities', { method: 'POST', body: amenity }),
+  deleteAmenity: (id: string) => 
+    apiRequest(`/api/amenities/${id}`, { method: 'DELETE' }),
+
+  // Rate Plans
+  getRatePlans: (propertyId: string) => 
+    apiRequest(`/api/rate-plans?propertyId=${propertyId}`),
+  createRatePlan: (ratePlan: Record<string, unknown>) => 
+    apiRequest('/api/rate-plans', { method: 'POST', body: ratePlan }),
+
+  // Housekeeping
   getHousekeepingTasks: (propertyId: string) => 
     apiRequest(`/api/housekeeping/tasks?propertyId=${propertyId}`),
-  
   createHousekeepingTask: (task: Record<string, unknown>) => 
     apiRequest('/api/housekeeping/tasks', { method: 'POST', body: task }),
-  
-  updateTaskStatus: (taskId: string, status: string) => 
+  updateHousekeepingTask: (taskId: string, status: string) => 
     apiRequest(`/api/housekeeping/tasks/${taskId}/status`, { method: 'PUT', body: { status } }),
-  
-  // Charts
-  getOccupancyTrend: (propertyId: string, days: number = 30) => 
-    apiRequest(`/api/charts/occupancy-trend/${propertyId}?days=${days}`),
-  
-  getRevenueBreakdown: (propertyId: string, days: number = 30) => 
-    apiRequest(`/api/charts/revenue-breakdown/${propertyId}?days=${days}`),
-  
-  getGuestDemographics: (propertyId: string) => 
-    apiRequest(`/api/charts/guest-demographics/${propertyId}`),
-  
-  getBookingSources: (propertyId: string) =>
-    apiRequest(`/api/charts/booking-sources/${propertyId}`),
-    
-  getDemandForecast: (propertyId: string, daysAhead: number = 30) =>
-    apiRequest(`/api/charts/demand-forecast/${propertyId}?daysAhead=${daysAhead}`),
-  
-  // Dashboard
+
+  // Maintenance
+  getMaintenanceTasks: (propertyId: string) => 
+    apiRequest(`/api/maintenance/tasks?propertyId=${propertyId}`),
+  createMaintenanceTask: (task: Record<string, unknown>) => 
+    apiRequest('/api/maintenance/tasks', { method: 'POST', body: task }),
+
+  // Analytics & Dashboard - FIXED endpoints
   getKpiSummary: (propertyId: string) => 
     apiRequest(`/api/dashboard/${propertyId}/kpi/summary`),
-  
   getDailyKpi: (propertyId: string, date: string) => 
     apiRequest(`/api/dashboard/${propertyId}/kpi/daily?date=${date}`),
-  
-  // Channels (OTA)
-  syncChannels: (propertyId: string) => 
-    apiRequest('/api/channels/sync', { method: 'POST', body: { propertyId } }),
-  
-  getChannelStatus: (channelId: string) => 
-    apiRequest(`/api/channels/status/${channelId}`),
+  getDashboardMetrics: (propertyId: string) => 
+    apiRequest(`/api/analytics/dashboard/${propertyId}`),
+  getOccupancyForecast: (propertyId: string, days: number = 90) => 
+    apiRequest(`/api/analytics/occupancy-forecast/${propertyId}?daysAhead=${days}`),
+  getRevenueForecast: (propertyId: string, startDate: string, endDate: string) => 
+    apiRequest(`/api/analytics/revenue-forecast/${propertyId}?startDate=${startDate}&endDate=${endDate}`),
+
+  // Charts - FIXED endpoints
+  getOccupancyTrend: (propertyId: string, from?: string, to?: string) => {
+    const params = new URLSearchParams()
+    if (from) params.append('from', from)
+    if (to) params.append('to', to)
+    const q = params.toString() ? `?${params.toString()}` : ''
+    return apiRequest(`/api/charts/occupancy-trend/${propertyId}${q}`)
+  },
+  getRevenueBreakdown: (propertyId: string, from?: string, to?: string) => {
+    const params = new URLSearchParams()
+    if (from) params.append('from', from)
+    if (to) params.append('to', to)
+    const q = params.toString() ? `?${params.toString()}` : ''
+    return apiRequest(`/api/charts/revenue-breakdown/${propertyId}${q}`)
+  },
+  getBookingSources: (propertyId: string) => 
+    apiRequest(`/api/charts/booking-sources/${propertyId}`),
+  getGuestDemographics: (propertyId: string) => 
+    apiRequest(`/api/charts/guest-demographics/${propertyId}`),
+  getDemandForecast: (propertyId: string, daysAhead: number = 30) => 
+    apiRequest(`/api/charts/demand-forecast/${propertyId}?daysAhead=${daysAhead}`),
 }
 
 export default api
