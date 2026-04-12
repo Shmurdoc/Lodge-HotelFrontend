@@ -806,13 +806,23 @@ function App() {
   // Get properties from store
   const { properties, setUser, setProperties, setRooms, setBookings, setGuests, setUsers: setStaff } = useAppStore();
 
-  // Load data from ASP.NET backend API on start
+  // Load data from ASP.NET backend API after login
   useEffect(() => {
+    if (!isLoggedIn) return;
+    
     const loadData = async () => {
       try {
         const api = await import('./lib/backendApi');
+        const { getBackendToken } = await import('./lib/api');
         
-        // Try to fetch from backend API first
+        // Check if we have a backend token
+        const token = getBackendToken();
+        if (!token) {
+          console.warn('No backend token - user needs to login first');
+          return;
+        }
+        
+        // Try to fetch from backend API 
         const [props, rooms, bookings, guests, staff] = await Promise.all([
           api.propertyApi.getAll().catch(() => []),
           api.roomApi.getAll().catch(() => []),
@@ -834,31 +844,20 @@ function App() {
         setStaff(staffArray);
         
         console.log('Loaded data from ASP.NET backend API');
-      } catch (err) {
-        console.warn('Backend not available, trying Supabase:', err);
-        // Fallback to Supabase/mock data
-        try {
-          const { dataService } = await import('./lib/supabaseData');
-          const [props, rooms, bookings, guests, staff] = await Promise.all([
-            dataService.getProperties(),
-            dataService.getRooms(),
-            dataService.getBookings(),
-            dataService.getGuests(),
-            dataService.getStaff(),
-          ]);
-          setProperties(props);
-          setRooms(rooms);
-          setBookings(bookings);
-          setGuests(guests);
-          setStaff(staff);
-          console.log('Using Supabase mock data');
-        } catch (err2) {
-          console.warn('Using local mock data:', err2);
+        
+        // Auto-select first property if available
+        if (propsArray.length > 0 && selectedPropertyId === 'all') {
+          setSelectedPropertyId(propsArray[0].id);
+          console.log('Auto-selected first property:', propsArray[0].id);
         }
+      } catch (err) {
+        console.error('Failed to load data from backend:', err);
+        // Don't fallback to mock - show error instead
       }
     };
+    
     loadData();
-  }, []);
+  }, [isLoggedIn, selectedPropertyId]);
 
   // Apply theme
   useEffect(() => {
@@ -888,9 +887,22 @@ function App() {
     // Login to backend API to get JWT token
     const loginSuccess = await loginToBackend(_email, _password);
     if (loginSuccess) {
-      console.log('Backend login successful!')
+      console.log('Backend login successful!');
+      
+      // Set default property after successful login
+      // Try to use the first property from store, or fall back to Demo Lodge
+      const demoPropertyId = '36101fba-f56b-449e-8fa6-28f2137d1048';
+      const properties = useAppStore.getState().properties;
+      if (properties && properties.length > 0) {
+        setSelectedPropertyId(properties[0].id);
+        console.log('Auto-selected property:', properties[0].id);
+      } else {
+        // Fallback to Demo Lodge ID
+        setSelectedPropertyId(demoPropertyId);
+        console.log('Set fallback property:', demoPropertyId);
+      }
     } else {
-      console.log('Backend login failed - will use local/mock data')
+      console.log('Backend login failed - will use local/mock data');
     }
     
     toast.success('Welcome back to NEXUS PMS!');

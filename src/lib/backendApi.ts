@@ -1,4 +1,4 @@
-import { supabase } from './supabase'
+import { getBackendToken } from './api'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:7001'
 
@@ -9,13 +9,18 @@ interface ApiResponse<T = unknown> {
 }
 
 async function fetchApi<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
-  const { data: { session } } = await supabase.auth.getSession()
+  // Use backend JWT token (obtained via loginToBackend), NOT Supabase token
+  const token = getBackendToken()
+  
+  if (!token) {
+    throw new Error('Not authenticated - please login to backend first')
+  }
   
   const response = await fetch(`${API_URL}${endpoint}`, {
     ...options,
     headers: {
       'Content-Type': 'application/json',
-      ...(session?.access_token && { 'Authorization': `Bearer ${session.access_token}` }),
+      'Authorization': `Bearer ${token}`,  // Use BACKEND JWT!
       ...options.headers,
     },
   })
