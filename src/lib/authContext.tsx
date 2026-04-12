@@ -72,18 +72,31 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
         const { data } = await Promise.race([sessionPromise, timeoutPromise]) as Awaited<typeof sessionPromise>;
 
         if (data.session?.user) {
+          // Get role from metadata or fallback based on email
+          const metadataRole = data.session.user.user_metadata?.role;
+          const userEmail = data.session.user.email?.toLowerCase() || '';
+          
+          // Default to Administrator for admin emails, Manager for manager emails
+          let role = metadataRole || 'Staff';
+          if (userEmail.includes('admin@') || userEmail.includes('superadmin')) {
+            role = 'Administrator';
+          } else if (userEmail.includes('manager@')) {
+            role = 'Manager';
+          }
+          
           // Convert Supabase user to AppUser
           const appUser: AppUser = {
             id: data.session.user.id,
             name: data.session.user.user_metadata?.full_name || data.session.user.email || 'Unknown',
             email: data.session.user.email || '',
-            role: data.session.user.user_metadata?.role || 'staff',
+            role: role,
             department: data.session.user.user_metadata?.department || 'General',
             phone: data.session.user.user_metadata?.phone || '',
             hireDate: data.session.user.created_at || new Date().toISOString(),
             status: 'active',
           };
 
+          console.log('Auth: User logged in:', appUser.email, 'with role:', appUser.role);
           setUser(appUser);
 
           // Set initial property ID from metadata
@@ -110,11 +123,23 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
         data: { subscription },
       } = supabase.auth.onAuthStateChange(async (event, session) => {
         if (event === 'SIGNED_IN' && session?.user) {
+          // Get role from metadata or fallback based on email
+          const metadataRole = session.user.user_metadata?.role;
+          const userEmail = session.user.email?.toLowerCase() || '';
+          
+          // Default to Administrator for admin emails, Manager for manager emails
+          let role = metadataRole || 'Staff';
+          if (userEmail.includes('admin@') || userEmail.includes('superadmin')) {
+            role = 'Administrator';
+          } else if (userEmail.includes('manager@')) {
+            role = 'Manager';
+          }
+          
           const appUser: AppUser = {
             id: session.user.id,
             name: session.user.user_metadata?.full_name || session.user.email || 'Unknown',
             email: session.user.email || '',
-            role: session.user.user_metadata?.role || 'staff',
+            role: role,
             department: session.user.user_metadata?.department || 'General',
             phone: session.user.user_metadata?.phone || '',
             hireDate: session.user.created_at || new Date().toISOString(),
