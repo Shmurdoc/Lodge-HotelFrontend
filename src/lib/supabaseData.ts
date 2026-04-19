@@ -1,11 +1,22 @@
-import { supabase } from './supabase'
+import { supabase, configError } from './supabase'
 import { useAppStore, type Property, type Room, type Booking, type Guest, type User, type Invoice, type Payment, type Ticket } from '@/store/useAppStore'
 
 const DEMO_PROPERTY_ID = '00000000-0000-0000-0000-000000000001'
 
+function useSupabase(): typeof supabase extends () => infer R ? R : null {
+  if (configError) return null
+  if (!supabase) return null
+  return supabase as any
+}
+
 export const dataService = {
   async getProperties(): Promise<Property[]> {
-    const { data, error } = await supabase
+    const sb = useSupabase()
+    if (!sb) {
+      console.warn('Supabase not configured, using demo properties')
+      return this.getDemoProperties()
+    }
+    const { data, error } = await sb
       .from('properties')
       .select('*')
       .order('created_at', { ascending: false })
