@@ -1,19 +1,13 @@
 import { supabase } from './supabase'
-import { useAppStore, type Property, type Room, type Booking, type Guest, type User, type Invoice, type Payment, type Ticket } from '@/store/useAppStore'
+import { useAppStore, type Property, type Room, type Booking, type Guest, type User, type Invoice, type Payment } from '@/store/useAppStore'
 
 const DEMO_PROPERTY_ID = '00000000-0000-0000-0000-000000000001'
 
 export const dataService = {
   async getProperties(): Promise<Property[]> {
-    if (!supabase) {
-      console.warn('Supabase not configured, using demo properties')
-      return this.getDemoProperties()
-    }
+    if (!supabase) return this.getDemoProperties()
     const { data, error } = await supabase.from('properties').select('*').order('created_at', { ascending: false })
-    if (error || !data?.length) {
-      console.warn('Using demo properties')
-      return this.getDemoProperties()
-    }
+    if (error || !data?.length) return this.getDemoProperties()
     return data || []
   },
 
@@ -27,47 +21,47 @@ export const dataService = {
   },
 
   async getBookings(propertyId?: string): Promise<Booking[]> {
-    if (!supabase) return this.getDemoBookings() as any
+    if (!supabase) return this.getDemoBookings()
     let query = supabase.from('bookings').select('*')
     if (propertyId) query = query.eq('property_id', propertyId)
     const { data, error } = await query.order('created_at', { ascending: false })
-    if (error || !data?.length) return this.getDemoBookings() as any
-    return (data || []).map(b => this.mapBookingFromDb(b)) as any
+    if (error || !data?.length) return this.getDemoBookings()
+    return (data || []).map(this.mapBookingFromDb)
   },
 
   async getGuests(propertyId?: string): Promise<Guest[]> {
-    if (!supabase) return this.getDemoGuests() as any
+    if (!supabase) return this.getDemoGuests()
     let query = supabase.from('guests').select('*')
     if (propertyId) query = query.eq('property_id', propertyId)
     const { data, error } = await query.order('created_at', { ascending: false })
-    if (error || !data?.length) return this.getDemoGuests() as any
-    return (data || []).map(g => this.mapGuestFromDb(g)) as any
+    if (error || !data?.length) return this.getDemoGuests()
+    return (data || []).map(this.mapGuestFromDb)
   },
 
   async getStaff(propertyId?: string): Promise<User[]> {
-    if (!supabase) return this.getDemoStaff() as any
+    if (!supabase) return this.getDemoStaff()
     let query = supabase.from('users').select('*')
     if (propertyId) query = query.eq('property_id', propertyId)
     const { data, error } = await query.order('name')
-    if (error || !data?.length) return this.getDemoStaff() as any
-    return (data || []).map(u => this.mapUserFromDb(u)) as any
+    if (error || !data?.length) return this.getDemoStaff()
+    return (data || []).map(this.mapUserFromDb)
   },
 
   async getInvoices(propertyId?: string): Promise<Invoice[]> {
-    if (!supabase) return this.getDemoInvoices() as any
+    if (!supabase) return this.getDemoInvoices()
     let query = supabase.from('invoices').select('*')
     if (propertyId) query = query.eq('property_id', propertyId)
     const { data, error } = await query.order('created_at', { ascending: false })
-    if (error || !data?.length) return this.getDemoInvoices() as any
+    if (error || !data?.length) return this.getDemoInvoices()
     return data as any
   },
 
   async getPayments(propertyId?: string): Promise<Payment[]> {
-    if (!supabase) return this.getDemoPayments() as any
+    if (!supabase) return this.getDemoPayments()
     let query = supabase.from('payments').select('*')
     if (propertyId) query = query.eq('property_id', propertyId)
     const { data, error } = await query.order('processed_at', { ascending: false })
-    if (error || !data?.length) return this.getDemoPayments() as any
+    if (error || !data?.length) return this.getDemoPayments()
     return data as any
   },
 
@@ -82,7 +76,7 @@ export const dataService = {
       price: row.price,
       description: row.description,
       amenities: row.amenities || [],
-      imageUrl: row.image_url,
+      image: row.image_url,
       maxOccupancy: row.max_occupancy,
       lastCleaned: row.last_cleaned,
       lastInspected: row.last_inspected,
@@ -101,17 +95,25 @@ export const dataService = {
       guestPhone: row.guest_phone,
       guestSegment: row.guest_segment,
       propertyId: row.property_id,
+      propertyName: row.property_name || 'Safari Lodge',
       roomId: row.room_id,
       roomNumber: row.room_number,
       roomType: row.room_type,
       checkIn: row.check_in,
       checkOut: row.check_out,
+      nights: row.nights || 1,
+      guests: row.guests || 1,
       status: row.status,
-      totalAmount: row.total_amount,
-      currency: row.currency,
+      paymentStatus: row.payment_status,
+      amount: row.amount,
+      ratePerNight: row.rate_per_night,
+      depositPaid: row.deposit_paid,
+      balanceDue: row.balance_due,
       source: row.source,
+      specialRequests: row.special_requests,
+      notes: row.notes,
       createdAt: row.created_at,
-      notes: row.notes
+      updatedAt: row.updated_at
     }
   },
 
@@ -128,7 +130,9 @@ export const dataService = {
       loyaltyPoints: row.loyalty_points,
       preferences: row.preferences || [],
       notes: row.notes,
-      companyName: row.company_name
+      companyName: row.company_name,
+      createdAt: row.created_at,
+      lastVisit: row.last_visit
     }
   },
 
@@ -139,7 +143,7 @@ export const dataService = {
       email: row.email,
       role: row.role,
       department: row.department,
-      avatarUrl: row.avatar_url,
+      avatar: row.avatar_url,
       phone: row.phone,
       hireDate: row.hire_date,
       status: row.status,
@@ -152,36 +156,34 @@ export const dataService = {
   },
 
   getDemoProperties(): Property[] {
-    return [{ id: DEMO_PROPERTY_ID, name: 'Safari Lodge', address: '123 Safari Way', totalRooms: 25, occupiedRooms: 18, rating: 4.5, imageUrl: '', status: 'operational', phone: '+1234567890', email: 'info@safarilodge.com', description: 'Demo property' }]
+    return [{ id: DEMO_PROPERTY_ID, name: 'Safari Lodge', address: '123 Safari Way', totalRooms: 25, occupiedRooms: 18, rating: 4.5, image: '', status: 'operational', phone: '+1234567890', email: 'info@safarilodge.com', description: 'Demo property' }]
   },
 
   getDemoRooms(): Room[] {
     return [
-      { id: '1', propertyId: DEMO_PROPERTY_ID, number: '101', type: 'Standard', floor: 1, status: 'available', price: 150, description: 'Standard Room', amenities: ['WiFi', 'TV'], maxOccupancy: 2 },
-      { id: '2', propertyId: DEMO_PROPERTY_ID, number: '102', type: 'Deluxe', floor: 1, status: 'occupied', price: 250, description: 'Deluxe Room', amenities: ['WiFi', 'TV', 'Mini Bar'], maxOccupancy: 3 }
+      { id: '1', propertyId: DEMO_PROPERTY_ID, number: '101', type: 'Standard', floor: 1, status: 'available', price: 150, description: 'Standard Room', amenities: ['WiFi', 'TV'], image: '', maxOccupancy: 2 },
+      { id: '2', propertyId: DEMO_PROPERTY_ID, number: '102', type: 'Deluxe', floor: 1, status: 'occupied', price: 250, description: 'Deluxe Room', amenities: ['WiFi', 'TV', 'Mini Bar'], image: '', maxOccupancy: 3 }
     ]
   },
 
   getDemoBookings(): Booking[] {
     return [
-      { id: '1', guestId: 'g1', guestName: 'John Doe', guestEmail: 'john@example.com', guestPhone: '+1234567890', guestSegment: 'VIP', propertyId: DEMO_PROPERTY_ID, roomId: '1', roomNumber: '101', roomType: 'Standard', checkIn: '2026-04-20', checkOut: '2026-04-25', status: 'confirmed', totalAmount: 750, currency: 'USD', source: 'direct', createdAt: '2026-04-15', notes: '' }
+      { id: '1', guestId: 'g1', guestName: 'John Doe', guestEmail: 'john@example.com', guestPhone: '+1234567890', guestSegment: 'VIP', propertyId: DEMO_PROPERTY_ID, propertyName: 'Safari Lodge', roomId: '1', roomNumber: '101', roomType: 'Standard', checkIn: '2026-04-20', checkOut: '2026-04-25', nights: 5, guests: 2, status: 'confirmed', paymentStatus: 'paid', amount: 750, source: 'direct', createdAt: '2026-04-15' }
     ]
   },
 
   getDemoGuests(): Guest[] {
     return [
-      { id: 'g1', name: 'John Doe', email: 'john@example.com', phone: '+1234567890', idNumber: 'ID123456', nationality: 'US', segment: 'VIP', totalStays: 5, loyaltyPoints: 500, preferences: ['Late checkout'], notes: '', companyName: '' }
+      { id: 'g1', name: 'John Doe', email: 'john@example.com', phone: '+1234567890', idNumber: 'ID123456', nationality: 'US', segment: 'VIP', totalStays: 5, loyaltyPoints: 500, preferences: ['Late checkout'], notes: '', companyName: '', createdAt: '2025-01-01', lastVisit: '2026-03-15' }
     ]
   },
 
   getDemoStaff(): User[] {
     return [
-      { id: 's1', name: 'Jane Smith', email: 'jane@hotel.com', role: 'Manager', department: 'Front Desk', avatarUrl: '', phone: '+1234567890', hireDate: '2024-01-15', status: 'active', address: '', emergencyContact: '', emergencyPhone: '', certifications: [], notes: '' }
+      { id: 's1', name: 'Jane Smith', email: 'jane@hotel.com', role: 'Manager', department: 'Front Desk', avatar: '', phone: '+1234567890', hireDate: '2024-01-15', status: 'active', address: '', emergencyContact: '', emergencyPhone: '', certifications: [], notes: '' }
     ]
   },
 
   getDemoInvoices(): Invoice[] { return [] },
   getDemoPayments(): Payment[] { return [] }
 }
-
-useAppStore.getState().loadInitialData()
