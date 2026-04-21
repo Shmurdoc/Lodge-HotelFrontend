@@ -8,7 +8,7 @@ interface ApiResponse<T = unknown> {
   error?: { code: string; message: string }
 }
 
-async function fetchApi<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
+export async function fetchApi<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
   const { data: { session } } = await supabase.auth.getSession()
   
   const response = await fetch(`${API_URL}${endpoint}`, {

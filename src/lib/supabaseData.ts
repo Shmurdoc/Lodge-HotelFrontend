@@ -1,157 +1,87 @@
-import { supabase } from './supabase'
+import { fetchApi } from './backendApi'
 import { useAppStore, type Property, type Room, type Booking, type Guest, type User, type Invoice, type Payment } from '@/store/useAppStore'
 
 const DEMO_PROPERTY_ID = '00000000-0000-0000-0000-000000000001'
 
 export const dataService = {
   async getProperties(): Promise<Property[]> {
-    if (!supabase) return this.getDemoProperties()
-    const { data, error } = await supabase.from('properties').select('*').order('created_at', { ascending: false })
-    if (error || !data?.length) return this.getDemoProperties()
-    return data || []
+    try {
+      const { data, error } = await fetchApi('/api/properties')
+      if (error) throw error
+      return data || []
+    } catch (e) {
+      console.warn('API error, using demo properties:', e)
+      return this.getDemoProperties()
+    }
   },
 
   async getRooms(propertyId?: string): Promise<Room[]> {
-    if (!supabase) return this.getDemoRooms()
-    let query = supabase.from('rooms').select('*')
-    if (propertyId) query = query.eq('property_id', propertyId)
-    const { data, error } = await query.order('number')
-    if (error || !data?.length) return this.getDemoRooms()
-    return (data || []).map(this.mapRoomFromDb)
+    try {
+      const url = propertyId ? `/api/rooms/property/${propertyId}` : '/api/rooms'
+      const { data, error } = await fetchApi(url)
+      if (error) throw error
+      return data || []
+    } catch (e) {
+      console.warn('API error, using demo rooms:', e)
+      return this.getDemoRooms()
+    }
   },
 
   async getBookings(propertyId?: string): Promise<Booking[]> {
-    if (!supabase) return this.getDemoBookings()
-    let query = supabase.from('bookings').select('*')
-    if (propertyId) query = query.eq('property_id', propertyId)
-    const { data, error } = await query.order('created_at', { ascending: false })
-    if (error || !data?.length) return this.getDemoBookings()
-    return (data || []).map(this.mapBookingFromDb)
+    try {
+      const url = propertyId ? `/api/bookings?propertyId=${propertyId}` : '/api/bookings'
+      const { data, error } = await fetchApi(url)
+      if (error) throw error
+      return data || []
+    } catch (e) {
+      console.warn('API error, using demo bookings:', e)
+      return this.getDemoBookings()
+    }
   },
 
   async getGuests(propertyId?: string): Promise<Guest[]> {
-    if (!supabase) return this.getDemoGuests()
-    let query = supabase.from('guests').select('*')
-    if (propertyId) query = query.eq('property_id', propertyId)
-    const { data, error } = await query.order('created_at', { ascending: false })
-    if (error || !data?.length) return this.getDemoGuests()
-    return (data || []).map(this.mapGuestFromDb)
+    try {
+      const url = propertyId ? `/api/guests?propertyId=${propertyId}` : '/api/guests'
+      const { data, error } = await fetchApi(url)
+      if (error) throw error
+      return data || []
+    } catch (e) {
+      console.warn('API error, using demo guests:', e)
+      return this.getDemoGuests()
+    }
   },
 
   async getStaff(propertyId?: string): Promise<User[]> {
-    if (!supabase) return this.getDemoStaff()
-    let query = supabase.from('users').select('*')
-    if (propertyId) query = query.eq('property_id', propertyId)
-    const { data, error } = await query.order('name')
-    if (error || !data?.length) return this.getDemoStaff()
-    return (data || []).map(this.mapUserFromDb)
+    try {
+      const url = propertyId ? `/api/staff?propertyId=${propertyId}` : '/api/staff'
+      const { data, error } = await fetchApi(url)
+      if (error) throw error
+      return data || []
+    } catch (e) {
+      console.warn('API error, using demo staff:', e)
+      return this.getDemoStaff()
+    }
   },
 
   async getInvoices(propertyId?: string): Promise<Invoice[]> {
-    if (!supabase) return this.getDemoInvoices()
-    let query = supabase.from('invoices').select('*')
-    if (propertyId) query = query.eq('property_id', propertyId)
-    const { data, error } = await query.order('created_at', { ascending: false })
-    if (error || !data?.length) return this.getDemoInvoices()
-    return data as any
+    try {
+      const url = propertyId ? `/api/invoices?propertyId=${propertyId}` : '/api/invoices'
+      const { data, error } = await fetchApi(url)
+      if (error) throw error
+      return data || []
+    } catch (e) {
+      return []
+    }
   },
 
   async getPayments(propertyId?: string): Promise<Payment[]> {
-    if (!supabase) return this.getDemoPayments()
-    let query = supabase.from('payments').select('*')
-    if (propertyId) query = query.eq('property_id', propertyId)
-    const { data, error } = await query.order('processed_at', { ascending: false })
-    if (error || !data?.length) return this.getDemoPayments()
-    return data as any
-  },
-
-  mapRoomFromDb(row: any): Room {
-    return {
-      id: row.id,
-      propertyId: row.property_id,
-      number: row.number,
-      type: row.type,
-      floor: row.floor,
-      status: row.status,
-      price: row.price,
-      description: row.description,
-      amenities: row.amenities || [],
-      image: row.image_url,
-      maxOccupancy: row.max_occupancy,
-      lastCleaned: row.last_cleaned,
-      lastInspected: row.last_inspected,
-      bedType: row.bed_type,
-      size: row.size,
-      view: row.view
-    }
-  },
-
-  mapBookingFromDb(row: any): Booking {
-    return {
-      id: row.id,
-      guestId: row.guest_id,
-      guestName: row.guest_name,
-      guestEmail: row.guest_email,
-      guestPhone: row.guest_phone,
-      guestSegment: row.guest_segment,
-      propertyId: row.property_id,
-      propertyName: row.property_name || 'Safari Lodge',
-      roomId: row.room_id,
-      roomNumber: row.room_number,
-      roomType: row.room_type,
-      checkIn: row.check_in,
-      checkOut: row.check_out,
-      nights: row.nights || 1,
-      guests: row.guests || 1,
-      status: row.status,
-      paymentStatus: row.payment_status,
-      amount: row.amount,
-      ratePerNight: row.rate_per_night,
-      depositPaid: row.deposit_paid,
-      balanceDue: row.balance_due,
-      source: row.source,
-      specialRequests: row.special_requests,
-      notes: row.notes,
-      createdAt: row.created_at,
-      updatedAt: row.updated_at
-    }
-  },
-
-  mapGuestFromDb(row: any): Guest {
-    return {
-      id: row.id,
-      name: row.name,
-      email: row.email,
-      phone: row.phone,
-      idNumber: row.id_number,
-      nationality: row.nationality,
-      segment: row.segment,
-      totalStays: row.total_stays,
-      loyaltyPoints: row.loyalty_points,
-      preferences: row.preferences || [],
-      notes: row.notes,
-      companyName: row.company_name,
-      createdAt: row.created_at,
-      lastVisit: row.last_visit
-    }
-  },
-
-  mapUserFromDb(row: any): User {
-    return {
-      id: row.id,
-      name: row.name,
-      email: row.email,
-      role: row.role,
-      department: row.department,
-      avatar: row.avatar_url,
-      phone: row.phone,
-      hireDate: row.hire_date,
-      status: row.status,
-      address: row.address,
-      emergencyContact: row.emergency_contact,
-      emergencyPhone: row.emergency_phone,
-      certifications: row.certifications || [],
-      notes: row.notes
+    try {
+      const url = propertyId ? `/api/payments?propertyId=${propertyId}` : '/api/payments'
+      const { data, error } = await fetchApi(url)
+      if (error) throw error
+      return data || []
+    } catch (e) {
+      return []
     }
   },
 
