@@ -12,6 +12,8 @@ import type { Booking } from '../store/useAppStore';
 import { toast } from 'sonner';
 import { exportToCsv } from '../utils/exportCsv';
 import { BookingsDataContainer } from '@/components/containers/BookingsDataContainer';
+import { createRecord } from '../lib/supabase';
+import { bookingApi } from '../lib/backendApi';
 
 // ─── colour maps ──────────────────────────────────────────────────────────────
 const statusColors: Record<string, { bg: string; text: string; border: string }> = {
@@ -344,6 +346,30 @@ function BookingManagementContent() {
         createdAt: now,
       };
       addBooking(newBooking);
+
+      // Save via ASP.NET API (system-of-record)
+      try {
+        // Build CreateBookingCommand payload expected by backend
+        const payload = {
+          propertyId: newBooking.propertyId,
+          guestId: newBooking.guestId,
+          checkInDate: newBooking.checkIn,
+          checkOutDate: newBooking.checkOut,
+          adultCount: newBooking.adults ?? Math.max(1, Math.floor(newBooking.guests / 2)),
+          childCount: newBooking.children ?? 0,
+          rooms: [{ roomId: newBooking.roomId, roomTypeId: null, rateApplied: newBooking.ratePerNight ?? 0 }],
+          specialRequests: newBooking.specialRequests ?? undefined,
+          createdByUserId: null,
+        } as any;
+
+        const created = await bookingApi.create(payload as any);
+        if (created && (created as any).bookingId) {
+          // Use server-assigned id/reference if provided
+          updateBooking(newBooking.id, { id: (created as any).bookingId, status: 'pending' } as any);
+        }
+      } catch (e) {
+        console.warn('Failed to save booking via backend API:', e);
+      }
 
       // Mark room as reserved if booking is for today or future
       if (form.checkIn <= new Date().toISOString().split('T')[0]) {
