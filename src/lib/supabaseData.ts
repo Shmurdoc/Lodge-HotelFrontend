@@ -6,8 +6,7 @@ const DEMO_PROPERTY_ID = '00000000-0000-0000-0000-000000000001'
 export const dataService = {
   async getProperties(): Promise<Property[]> {
     try {
-      const { data, error } = await fetchApi('/api/properties')
-      if (error) throw error
+      const data = await fetchApi<Property[]>('/api/properties')
       return data || []
     } catch (e) {
       console.warn('API error, using demo properties:', e)
@@ -18,8 +17,7 @@ export const dataService = {
   async getRooms(propertyId?: string): Promise<Room[]> {
     try {
       const url = propertyId ? `/api/rooms/property/${propertyId}` : '/api/rooms'
-      const { data, error } = await fetchApi(url)
-      if (error) throw error
+      const data = await fetchApi<Room[]>(url)
       return data || []
     } catch (e) {
       console.warn('API error, using demo rooms:', e)
@@ -30,8 +28,7 @@ export const dataService = {
   async getBookings(propertyId?: string): Promise<Booking[]> {
     try {
       const url = propertyId ? `/api/bookings?propertyId=${propertyId}` : '/api/bookings'
-      const { data, error } = await fetchApi(url)
-      if (error) throw error
+      const data = await fetchApi<Booking[]>(url)
       return data || []
     } catch (e) {
       console.warn('API error, using demo bookings:', e)
@@ -42,8 +39,7 @@ export const dataService = {
   async getGuests(propertyId?: string): Promise<Guest[]> {
     try {
       const url = propertyId ? `/api/guests?propertyId=${propertyId}` : '/api/guests'
-      const { data, error } = await fetchApi(url)
-      if (error) throw error
+      const data = await fetchApi<Guest[]>(url)
       return data || []
     } catch (e) {
       console.warn('API error, using demo guests:', e)
@@ -54,8 +50,7 @@ export const dataService = {
   async getStaff(propertyId?: string): Promise<User[]> {
     try {
       const url = propertyId ? `/api/staff?propertyId=${propertyId}` : '/api/staff'
-      const { data, error } = await fetchApi(url)
-      if (error) throw error
+      const data = await fetchApi<User[]>(url)
       return data || []
     } catch (e) {
       console.warn('API error, using demo staff:', e)
@@ -66,8 +61,7 @@ export const dataService = {
   async getInvoices(propertyId?: string): Promise<Invoice[]> {
     try {
       const url = propertyId ? `/api/invoices?propertyId=${propertyId}` : '/api/invoices'
-      const { data, error } = await fetchApi(url)
-      if (error) throw error
+      const data = await fetchApi<Invoice[]>(url)
       return data || []
     } catch (e) {
       return []
@@ -77,8 +71,7 @@ export const dataService = {
   async getPayments(propertyId?: string): Promise<Payment[]> {
     try {
       const url = propertyId ? `/api/payments?propertyId=${propertyId}` : '/api/payments'
-      const { data, error } = await fetchApi(url)
-      if (error) throw error
+      const data = await fetchApi<Payment[]>(url)
       return data || []
     } catch (e) {
       return []
